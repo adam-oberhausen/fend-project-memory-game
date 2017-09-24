@@ -1,3 +1,7 @@
 # How to contribute
 
-The files in this repository are used as the starting point for all students. Because we want students to write the majority of the code themselves, pull requests (most likely) will _not_ be merged into the project.
+#### **Did you write an improvement or bug fix to the project?**
+
+* Open a new GitHub pull request.
+
+* Ensure the PR description clearly describes the changes you made.
