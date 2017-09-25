@@ -265,6 +265,9 @@ function victory() {
 
 function keepTrackOfGameDuration() {
   gameDuration++;
+  var $timer = $("#timer");
+  $timer.html(gameDuration);
+  console.log($timer.html());
 }
 
 $(document).ready(function() {
