@@ -88,6 +88,7 @@ function restartGame() {
   var htmlIconValue = '<i class="fa fa-%data%"></i>';
   var $deck = $("#deck");
   var $moves = $("#moves");
+  var $timer = $("#timer");
 
   numberOfMoves = 0;
   numberOfStars = 5;
@@ -95,6 +96,7 @@ function restartGame() {
   $moves.html(numberOfMoves);
   $deck.empty();
   deck.cards = shuffle(deck.cards);
+  $timer.html(gameDuration);
 
   for (var i = 0; i < deck.cards.length; i++) {
     var formattedListItem = htmlListItem.replace("%data%", deck.cards[i].class);
@@ -103,11 +105,8 @@ function restartGame() {
     var formattedIconValue = htmlIconValue.replace("%data%", deck.cards[i].icon);
     $listItem.append(formattedIconValue);
   }
-
+  stopTimer();
   addCardClickEvent();
-  addRestartClickEvent();
-  clearInterval(gameDurationTimer);
-  gameDurationTimer = setInterval(keepTrackOfGameDuration, 1000);
 }
 
 // Shuffle function from http://stackoverflow.com/a/2450976
@@ -138,13 +137,16 @@ function shuffle(array) {
 function addCardClickEvent() {
   var $li = $("li");
   $li.on("click", displayCardSymbol);
+  $li.on("click", startTimer);
 }
 
+// set up the event listener for the restart button
 function addRestartClickEvent() {
   var $restart = $("#restart");
   $restart.on("click", restartGame);
 }
 
+// called on the li click event will add a card to the open card array
 function displayCardSymbol() {
   if (($(this).attr("class") !== "card open match") && ($(this).attr("class") !== "card open show") && openCards.length < 2) {
     $(this).attr("class", "card open show");
@@ -152,6 +154,20 @@ function displayCardSymbol() {
   }
 }
 
+// start the timer that records the duration of the game
+function startTimer() {
+  if (typeof gameDurationTimer === "undefined" && !checkForWinningCondition()) {
+    gameDurationTimer = setInterval(keepTrackOfGameDuration, 1000);
+  }
+}
+
+// stops the timer once that game has been completed or user presses restart button
+function stopTimer() {
+  clearInterval(gameDurationTimer);
+  gameDurationTimer = undefined;
+}
+
+// add a card object to the openCards array.  Should never have more than two cards
 function addToOpenCards(obj) {
   var cardClass = obj.attr("class");
   if (cardClass === "card open show") {
@@ -166,6 +182,7 @@ function addToOpenCards(obj) {
   }
 }
 
+// keeps track of the number of move the player has made
 function incrementMoveCounter() {
   numberOfMoves++;
   var $moves = $("#moves");
@@ -173,6 +190,7 @@ function incrementMoveCounter() {
   updateStarRating();
 }
 
+// keeps track of star rating based on how many moves the player has performed
 function updateStarRating() {
   var htmlListItem = '<li><i class="fa fa-star"></i></li>';
   var $stars = $("#stars");
@@ -201,6 +219,7 @@ function updateStarRating() {
   }
 }
 
+// checks to see if the open cards are a match
 function checkForMatch() {
   if (openCards[0].children().attr("class") === openCards[1].children().attr("class")) {
     setTimeout(lockCardsInOpenPosition, 2000);
@@ -209,6 +228,7 @@ function checkForMatch() {
   }
 }
 
+// hides all open cards that are not a known match
 function clearOpenCards() {
   for (var i = 0; i < openCards.length; i++) {
     if (openCards[i].attr("class") !== "card open match") {
@@ -218,6 +238,7 @@ function clearOpenCards() {
   openCards = [];
 }
 
+// called when matching cards have been established
 function lockCardsInOpenPosition() {
   for (var i = 0; i < openCards.length; i++) {
     openCards[i].attr("class", "card open match");
@@ -225,6 +246,7 @@ function lockCardsInOpenPosition() {
   clearOpenCards();
 }
 
+// after each move we check to see if the player has met the winning condition
 function checkForWinningCondition() {
   var $deck = $("#deck");
   var gameComplete = true;
@@ -239,8 +261,10 @@ function checkForWinningCondition() {
   return gameComplete;
 }
 
-function victory() {  
-  var htmlVictoryDialog = '<p>%data%</p>'
+// called when the player achieves victory
+function victory() {
+  stopTimer();
+  var htmlVictoryDialog = '<p>%data%</p>';
   var victoryMessage = "Congratulations on your victory!<br><br>You completed the game in " + numberOfMoves + " moves.<br><br>You earned a star rating of " + numberOfStars + " stars.<br><br>It took you " + gameDuration + " seconds to achieve victory.";
   var formattedVictoryDialog = htmlVictoryDialog.replace("%data%", victoryMessage);
   var $victoryDialog = $("#victory-dialog");
@@ -263,13 +287,15 @@ function victory() {
   });
 }
 
+// keeps track of the duration of the game in seconds
 function keepTrackOfGameDuration() {
   gameDuration++;
   var $timer = $("#timer");
   $timer.html(gameDuration);
-  console.log($timer.html());
 }
 
+// When the document is ready the game is initialized
 $(document).ready(function() {
   restartGame();
+  addRestartClickEvent();
 })
