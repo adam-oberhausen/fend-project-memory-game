@@ -106,6 +106,7 @@ function restartGame() {
 
   addCardClickEvent();
   addRestartClickEvent();
+  clearInterval(gameDurationTimer);
   gameDurationTimer = setInterval(keepTrackOfGameDuration, 1000);
 }
 
@@ -238,8 +239,7 @@ function checkForWinningCondition() {
   return gameComplete;
 }
 
-function victory() {
-  clearInterval(gameDurationTimer);
+function victory() {  
   var htmlVictoryDialog = '<p>%data%</p>'
   var victoryMessage = "Congratulations on your victory!<br><br>You completed the game in " + numberOfMoves + " moves.<br><br>You earned a star rating of " + numberOfStars + " stars.<br><br>It took you " + gameDuration + " seconds to achieve victory.";
   var formattedVictoryDialog = htmlVictoryDialog.replace("%data%", victoryMessage);
