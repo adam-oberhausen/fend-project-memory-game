@@ -91,7 +91,7 @@ function restartGame() {
   var $timer = $("#timer");
 
   numberOfMoves = 0;
-  numberOfStars = 5;
+  numberOfStars = 3;
   gameDuration = 0;
   $moves.html(numberOfMoves);
   $deck.empty();
@@ -197,20 +197,14 @@ function updateStarRating() {
   $stars.empty();
 
   switch (true) {
-    case (numberOfMoves >= 25):
+    case (numberOfMoves >= 20):
       numberOfStars = 1;
       break;
-    case (numberOfMoves >= 20):
+    case (numberOfMoves >= 15):
       numberOfStars = 2;
       break;
-    case (numberOfMoves >= 18):
-      numberOfStars = 3;
-      break;
-    case (numberOfMoves >= 15):
-      numberOfStars = 4;
-      break;
     case (numberOfMoves < 15):
-      numberOfStars = 5;
+      numberOfStars = 3;
       break;
   }
 
